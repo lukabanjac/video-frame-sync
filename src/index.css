@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+body {
+  @apply bg-gray-600;
+}
+
+button {
+  @apply bg-gray-800 text-orange-300 px-5 py-2 hover:bg-gray-700 cursor-pointer;
+}
+
+code {
+  @apply font-bold;
+}
