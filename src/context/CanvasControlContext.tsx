@@ -14,7 +14,7 @@ interface ICanvasControlContext {
   play: () => void;
   pause: () => void;
   seek: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  stepFrame: () => void;
+  stepFrame: (direction: 'forward' | 'back') => void;
 }
 
 const CanvasControlContext = createContext<ICanvasControlContext>({
@@ -98,12 +98,17 @@ const CanvasControlProvider = ({ children }: { children: ReactNode }) => {
     [playerRef, drawFrame]
   );
 
-  const stepFrame = useCallback(() => {
+  const stepFrame = useCallback((direction) => {
     if (isPlaying) pause();
     if (!playerRef.current) return;
 
     const frameStep = 1 / VIDEO_FPS;
-    playerRef.current.currentTime += frameStep;
+    if(direction === 'forward') {
+      playerRef.current.currentTime += frameStep;
+    }
+    if (direction === 'back') {
+      playerRef.current.currentTime -= frameStep;
+    }
     drawFrame();
   }, [isPlaying, playerRef]);
 
