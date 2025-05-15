@@ -1,14 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CanvasVideoPlayer } from '../VideoPlayer/CanvasVideoPlayer';
 import { useCanvasControl } from '../../context/CanvasControlContext';
 import VIDEO_SRC from '../../assets/video.mp4';
+import VideoPlayer from '../SuperControls/VideoPlayer';
 
 type CanvasVideoDisplayProps = {};
 
 export const CanvasVideoDisplay: React.FC<CanvasVideoDisplayProps> = ({}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const iFrameRef = useRef<HTMLIFrameElement>(null);
   const canvasARef = useRef<HTMLCanvasElement>(null);
   const canvasBRef = useRef<HTMLCanvasElement>(null);
+
+  const [loadIframe, setLoadIframe] = useState(false);
 
   const {
     setVideoRef,
@@ -32,6 +36,10 @@ export const CanvasVideoDisplay: React.FC<CanvasVideoDisplayProps> = ({}) => {
     setCanvasBRef(canvasBRef.current);
   }, [setCanvasBRef]);
 
+  useEffect(() => {
+    console.log(iFrameRef.current?.contentWindow?.document);
+  }, [loadIframe]);
+
   return (
     <div className="flex flex-col gap-10">
       <h2 className="font-bold text-3xl">Synced Video Players</h2>
@@ -44,14 +52,7 @@ export const CanvasVideoDisplay: React.FC<CanvasVideoDisplayProps> = ({}) => {
         the drawing is stopped according to video controls.
       </p>
       <div className="flex gap-2 items-center justify-center flex-col lg:flex-row">
-        <video
-          ref={videoRef}
-          src={VIDEO_SRC}
-          controls
-          controlsList="nodownload nofullscreen noplaybackrate"
-          disablePictureInPicture
-          hidden
-        />
+        <VideoPlayer videoRef={videoRef} />
         <CanvasVideoPlayer
           videoRef={videoRef}
           canvasRef={canvasARef}
