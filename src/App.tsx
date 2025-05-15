@@ -3,7 +3,7 @@ import { CanvasControlProvider } from './context/CanvasControlContext';
 import { CanvasVideoDisplay } from './components/VideoDisplay/CanvasVideoDisplay';
 import { NaiveVideoDisplay } from './components/VideoDisplay/NaiveVideoDisplay';
 import { NaiveControlProvider } from './context/NaiveControlContext';
-import CanvasSuperControls from './components/SuperControls/CanvasSuperControls';
+import { CanvasSuperControls } from './components/SuperControls/CanvasSuperControls';
 import NaiveSuperControls from './components/SuperControls/NaiveSuperControls';
 
 const App: React.FC = () => {

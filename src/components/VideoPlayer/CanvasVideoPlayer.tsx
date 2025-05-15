@@ -2,6 +2,8 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import PlayIcon from '../../assets/play-icon.svg';
 import PauseIcon from '../../assets/pause-icon.svg';
+import { RangeInput } from '../PlaybackControl/RangeInput/RangeInput';
+import { PlayPauseButton } from '../PlaybackControl/PlayPauseButton/PlayPauseButton';
 
 interface ICanvasVideoPlayerProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -43,35 +45,12 @@ export const CanvasVideoPlayer: React.FC<ICanvasVideoPlayerProps> = ({
 
         <div className="absolute inset-0 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="flex justify-center gap-4 p-2 items-center">
-            <button
-              onClick={isPlaying ? handlePause : handlePlay}
-              className="bg-white/80 hover:bg-white text-black font-bold py-1 px-3 rounded"
-            >
-              <div className="h-[40px] ">
-                {isPlaying ? (
-                  <img
-                    src={PauseIcon}
-                    alt="Play Button"
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <img
-                    src={PlayIcon}
-                    alt="Pause Button"
-                    className="w-full h-full"
-                  />
-                )}
-              </div>
-            </button>
-            <input
-              type="range"
-              min={0}
-              max={videoRef.current?.duration || 30}
-              value={currentTime}
-              step={0.1}
-              onChange={handleSeek}
-              className="accent-orange-300 w-2/3 bg-transparent rounded-lg cursor-pointer"
+            <PlayPauseButton
+              isPlaying={isPlaying}
+              play={handlePlay}
+              pause={handlePause}
             />
+            <RangeInput videoRef={videoRef} handleSeek={handleSeek} />
           </div>
         </div>
       </div>

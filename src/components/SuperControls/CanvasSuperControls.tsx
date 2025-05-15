@@ -1,18 +1,19 @@
 import React from 'react';
 import { useCanvasControl } from '../../context/CanvasControlContext';
+import { PlaybackControl } from '../PlaybackControl/PlaybackControl';
 
-export default function CanvasSuperControls() {
-  const { isPlaying, play, pause, stepFrame } = useCanvasControl();
+export const CanvasSuperControls: React.FC = () => {
+  const { isPlaying, play, pause, seek, stepFrame, videoRef } =
+    useCanvasControl();
 
   return (
-    <div className="flex w-full justify-center">
-      <div className="mt-5 gap-3">
-        <button onClick={() => stepFrame('back')}>{"<<"}</button>
-        <button className="button" onClick={isPlaying ? pause : play}>
-          {isPlaying ? 'Pause' : 'Play'}
-        </button>
-        <button onClick={() => stepFrame('forward')}>{">>"}</button>
-      </div>
-    </div>
+    <PlaybackControl
+      videoRef={videoRef}
+      stepFrame={stepFrame}
+      play={play}
+      pause={pause}
+      seek={seek}
+      isPlaying={isPlaying}
+    />
   );
-}
+};
