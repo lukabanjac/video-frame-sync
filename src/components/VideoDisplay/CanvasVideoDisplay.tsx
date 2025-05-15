@@ -11,7 +11,7 @@ export const CanvasVideoDisplay: React.FC<CanvasVideoDisplayProps> = ({}) => {
   const canvasBRef = useRef<HTMLCanvasElement>(null);
 
   const {
-    setPlayerRef,
+    setVideoRef,
     setCanvasARef,
     setCanvasBRef,
     play,
@@ -21,8 +21,8 @@ export const CanvasVideoDisplay: React.FC<CanvasVideoDisplayProps> = ({}) => {
   } = useCanvasControl();
 
   useEffect(() => {
-    setPlayerRef(videoRef.current);
-  }, [setPlayerRef]);
+    setVideoRef(videoRef.current);
+  }, [setVideoRef]);
 
   useEffect(() => {
     setCanvasARef(canvasARef.current);

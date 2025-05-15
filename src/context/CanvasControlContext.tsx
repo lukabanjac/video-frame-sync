@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
+import React, { ReactNode, RefObject, useCallback, useEffect, useRef } from 'react';
 import { createContext, useContext, useState } from 'react';
 
 const VIDEO_FPS = 60;
@@ -7,8 +7,9 @@ const CANVAS_HEIGHT = '360px';
 
 interface ICanvasControlContext {
   isPlaying: boolean;
+  videoRef: RefObject<HTMLVideoElement | null> | null;
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
-  setPlayerRef: (ref: HTMLVideoElement | null) => void;
+  setVideoRef: (ref: HTMLVideoElement | null) => void;
   setCanvasARef: (ref: HTMLCanvasElement | null) => void;
   setCanvasBRef: (ref: HTMLCanvasElement | null) => void;
   play: () => void;
@@ -19,8 +20,9 @@ interface ICanvasControlContext {
 
 const CanvasControlContext = createContext<ICanvasControlContext>({
   isPlaying: false,
+  videoRef: null,
   setIsPlaying: () => {},
-  setPlayerRef: () => {},
+  setVideoRef: () => {},
   setCanvasARef: () => {},
   setCanvasBRef: () => {},
   play: () => {},
@@ -30,14 +32,14 @@ const CanvasControlContext = createContext<ICanvasControlContext>({
 });
 
 const CanvasControlProvider = ({ children }: { children: ReactNode }) => {
-  const playerRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const canvasARef = useRef<HTMLCanvasElement>(null);
   const canvasBRef = useRef<HTMLCanvasElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const setPlayerRef = (ref: HTMLVideoElement | null) => {
-    playerRef.current = ref;
+  const setVideoRef = (ref: HTMLVideoElement | null) => {
+    videoRef.current = ref;
   };
 
   const setCanvasARef = (ref: HTMLCanvasElement | null) => {
@@ -49,7 +51,7 @@ const CanvasControlProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const drawFrame = useCallback(() => {
-    const video = playerRef.current;
+    const video = videoRef.current;
     const canvasA = canvasARef.current;
     const canvasB = canvasBRef.current;
 
@@ -73,51 +75,52 @@ const CanvasControlProvider = ({ children }: { children: ReactNode }) => {
       ctxB.drawImage(video, 0, 0, canvasB.width, canvasB.height);
     }
 
-    playerRef.current?.requestVideoFrameCallback(drawFrame);
-  }, [playerRef, canvasARef, canvasBRef]);
+    videoRef.current?.requestVideoFrameCallback(drawFrame);
+  }, [videoRef, canvasARef, canvasBRef]);
 
   const play = useCallback(() => {
     setIsPlaying(true);
-    playerRef.current?.play().catch(() => console.log("Error playing the video"));
-    playerRef.current?.requestVideoFrameCallback(drawFrame);
-  }, [playerRef, isPlaying, drawFrame]);
+    videoRef.current?.play().catch(() => console.log("Error playing the video"));
+    videoRef.current?.requestVideoFrameCallback(drawFrame);
+  }, [videoRef, isPlaying, drawFrame]);
 
   const pause = useCallback(() => {
-    playerRef.current?.pause();
+    videoRef.current?.pause();
     setIsPlaying(false);
-  }, [isPlaying, playerRef]);
+  }, [isPlaying, videoRef]);
 
   const seek = useCallback(
     (e) => {
-      if (playerRef.current) {
+      if (videoRef.current) {
         const time = parseFloat(e.target.value);
-        playerRef.current.currentTime = time;
+        videoRef.current.currentTime = time;
         drawFrame();
       }
     },
-    [playerRef, drawFrame]
+    [videoRef, drawFrame]
   );
 
   const stepFrame = useCallback((direction) => {
     if (isPlaying) pause();
-    if (!playerRef.current) return;
+    if (!videoRef.current) return;
 
     const frameStep = 1 / VIDEO_FPS;
     if(direction === 'forward') {
-      playerRef.current.currentTime += frameStep;
+      videoRef.current.currentTime += frameStep;
     }
     if (direction === 'back') {
-      playerRef.current.currentTime -= frameStep;
+      videoRef.current.currentTime -= frameStep;
     }
     drawFrame();
-  }, [isPlaying, playerRef]);
+  }, [isPlaying, videoRef]);
 
   return (
     <CanvasControlContext.Provider
       value={{
         isPlaying,
+        videoRef,
         setIsPlaying,
-        setPlayerRef,
+        setVideoRef,
         setCanvasARef,
         setCanvasBRef,
         play,
