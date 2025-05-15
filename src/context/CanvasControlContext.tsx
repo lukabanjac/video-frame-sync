@@ -1,7 +1,13 @@
-import React, { ReactNode, RefObject, useCallback, useEffect, useRef } from 'react';
+import React, {
+  ReactNode,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { createContext, useContext, useState } from 'react';
 
-const VIDEO_FPS = 60;
+const VIDEO_FPS = 25;
 const CANVAS_WIDTH = '640px';
 const CANVAS_HEIGHT = '360px';
 
@@ -80,7 +86,9 @@ const CanvasControlProvider = ({ children }: { children: ReactNode }) => {
 
   const play = useCallback(() => {
     setIsPlaying(true);
-    videoRef.current?.play().catch(() => console.log("Error playing the video"));
+    videoRef.current
+      ?.play()
+      .catch(() => console.log('Error playing the video'));
     videoRef.current?.requestVideoFrameCallback(drawFrame);
   }, [videoRef, isPlaying, drawFrame]);
 
@@ -100,19 +108,22 @@ const CanvasControlProvider = ({ children }: { children: ReactNode }) => {
     [videoRef, drawFrame]
   );
 
-  const stepFrame = useCallback((direction) => {
-    if (isPlaying) pause();
-    if (!videoRef.current) return;
+  const stepFrame = useCallback(
+    (direction) => {
+      if (isPlaying) pause();
+      if (!videoRef.current) return;
 
-    const frameStep = 1 / VIDEO_FPS;
-    if(direction === 'forward') {
-      videoRef.current.currentTime += frameStep;
-    }
-    if (direction === 'back') {
-      videoRef.current.currentTime -= frameStep;
-    }
-    drawFrame();
-  }, [isPlaying, videoRef]);
+      const frameStep = 1 / VIDEO_FPS;
+      if (direction === 'forward') {
+        videoRef.current.currentTime += frameStep;
+      }
+      if (direction === 'back') {
+        videoRef.current.currentTime -= frameStep;
+      }
+      drawFrame();
+    },
+    [isPlaying, videoRef]
+  );
 
   return (
     <CanvasControlContext.Provider
